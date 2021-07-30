@@ -65,7 +65,7 @@ class Client(discord.Client):
 
         for a in self.guild.text_channels:
 
-            if a.name == "server-announcements":
+            if a.name == "emoji-voting":
                 self.announcements_channel = a
                 print(getTimeStamp("SERVER"), "Found Announcements Channel: ", str(self.announcements_channel.id))
                 self.emojiHandler = EmojiHandler(self.guild, self.announcements_channel, self)
