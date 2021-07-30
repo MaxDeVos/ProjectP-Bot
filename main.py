@@ -4,6 +4,7 @@ import discord
 from EmojiHandler import EmojiHandler
 from PinHandler import PinHandler
 from RoleHandler import RoleHandler
+import LinkShortener
 from HistoryManager import HistoryManager
 import Voting
 import LanguageHandler
@@ -70,7 +71,7 @@ class Client(discord.Client):
                 print(getTimeStamp("SERVER"), "Found Announcements Channel: ", str(self.announcements_channel.id))
                 self.emojiHandler = EmojiHandler(self.guild, self.announcements_channel, self)
 
-            if a.name == "shit-takes":
+            if a.name == "nsfw":
                 self.misc = a
                 print(getTimeStamp("SERVER"), "Found Misc Channel: ", str(self.misc.id))
 
@@ -97,7 +98,7 @@ class Client(discord.Client):
         self.roleHandler = RoleHandler(self.guild, self.admin_channel, self.roles_channel)
 
         # Emergency Manual Pin
-        # mes = await self.misc.fetch_message("846947559762427924")
+        # mes = await self.misc.fetch_message("850950438777913384")
         # await self.pinHandler.pin(mes)
 
         # history = HistoryManager(self.guild, self.database)
@@ -105,6 +106,7 @@ class Client(discord.Client):
 
     async def on_message(self, message: discord.Message):
         if message.guild.id == active_guild and not message.author.bot:
+            await LinkShortener.shorten_link(message)
             await LanguageHandler.determine_language(message)
             if self.emojiHandler is not None:
                 await self.emojiHandler.handleEmojiMessage(message)
