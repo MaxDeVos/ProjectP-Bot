@@ -71,7 +71,7 @@ class Client(discord.Client):
                 print(getTimeStamp("SERVER"), "Found Announcements Channel: ", str(self.announcements_channel.id))
                 self.emojiHandler = EmojiHandler(self.guild, self.announcements_channel, self)
 
-            if a.name == "nsfw":
+            if a.name == "bane-bot":
                 self.misc = a
                 print(getTimeStamp("SERVER"), "Found Misc Channel: ", str(self.misc.id))
 
@@ -97,6 +97,9 @@ class Client(discord.Client):
         self.emojiHandler.addVoters(await Voting.create_archived_votes(self))
         self.roleHandler = RoleHandler(self.guild, self.admin_channel, self.roles_channel)
 
+        self.misc.send("Alright link shortening is gone, but check out this epic youtube video")
+        self.misc.send("https://www.youtube.com/watch")
+
         # Emergency Manual Pin
         # mes = await self.misc.fetch_message("850950438777913384")
         # await self.pinHandler.pin(mes)
@@ -106,7 +109,7 @@ class Client(discord.Client):
 
     async def on_message(self, message: discord.Message):
         if message.guild.id == active_guild and not message.author.bot:
-            await LinkShortener.shorten_link(message)
+            # await LinkShortener.shorten_link(message)
             await LanguageHandler.determine_language(message)
             if self.emojiHandler is not None:
                 await self.emojiHandler.handleEmojiMessage(message)
