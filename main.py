@@ -97,8 +97,8 @@ class Client(discord.Client):
         self.emojiHandler.addVoters(await Voting.create_archived_votes(self))
         self.roleHandler = RoleHandler(self.guild, self.admin_channel, self.roles_channel)
 
-        await self.misc.send("Alright link shortening is gone, but check out this epic youtube video")
-        await self.misc.send("https://www.youtube.com/watch")
+        # await self.misc.send("Alright link shortening is gone, but check out this epic youtube video")
+        # await self.misc.send("https://www.youtube.com/watch")
 
         # Emergency Manual Pin
         # mes = await self.misc.fetch_message("850950438777913384")
