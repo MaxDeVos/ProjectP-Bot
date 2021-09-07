@@ -2,8 +2,10 @@ from googletrans import Translator
 import time
 import discord
 import re
+from difflib import SequenceMatcher
 
 translator = Translator()
+
 
 def getTimeStamp():
     return "[LANGUAGE] [" + time.strftime('%Y-%m-%d %H:%M:%S') + "] "
@@ -20,9 +22,11 @@ async def determine_language(message):
                 print(getTimeStamp() + message.author.name + " to ", lang.lang, ":", content)
                 translation = translator.translate(content).text
 
+                similarity_index = similar(str(translation).lower(), str(content.lower()))
+
                 # Check if translation is the same
                 if str(translation).lower().replace(" ", "") != content and \
-                        str(translation).lower() != content:
+                        str(translation).lower() != content and similarity_index < 0.95:
                     emojied_translation = replenesh_emojis(message, translation)
                     await message.reply("**Translation:  **" + str(emojied_translation).replace("things", "stuff"),
                                         mention_author=False)
@@ -34,17 +38,19 @@ async def determine_language(message):
         print("[ERROR] " + getTimeStamp() + str(e))
 
 
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
+
+
 def cleanse_emojis(message: discord.Message):
     out: str
     out = message.content
-    match: re.Match
     for match in re.findall("(?<=<)(.*?)(?=>)", out):
         out = out.replace(match, re.findall("(?:[^:]*:s*){2}(.*)", match)[0])
     return out
 
 
 def replenesh_emojis(message: discord.Message, content):
-    match: re.Match
     guild: discord.Guild
     guild = message.guild
 
