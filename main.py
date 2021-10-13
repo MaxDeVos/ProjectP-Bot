@@ -1,9 +1,11 @@
 import time
 
 import discord
+
 from EmojiHandler import EmojiHandler
 from PinHandler import PinHandler
 from RoleHandler import RoleHandler
+import DataLogger
 import LinkShortener
 from HistoryManager import HistoryManager
 import Voting
@@ -71,7 +73,7 @@ class Client(discord.Client):
                 print(getTimeStamp("SERVER"), "Found Announcements Channel: ", str(self.announcements_channel.id))
                 self.emojiHandler = EmojiHandler(self.guild, self.announcements_channel, self)
 
-            if a.name == "bane-bot":
+            if a.name == "perilous-polls":
                 self.misc = a
                 print(getTimeStamp("SERVER"), "Found Misc Channel: ", str(self.misc.id))
 
@@ -97,11 +99,15 @@ class Client(discord.Client):
         self.emojiHandler.addVoters(await Voting.create_archived_votes(self))
         self.roleHandler = RoleHandler(self.guild, self.admin_channel, self.roles_channel)
 
-        # await self.misc.send("Alright link shortening is gone, but check out this epic youtube video")
-        # await self.misc.send("https://www.youtube.com/watch")
+        # m = await self.misc.fetch_message(875120875622518804)
+        # await m.reply("ahem")
 
         # Emergency Manual Pin
-        # mes = await self.misc.fetch_message("850950438777913384")
+        # mes = await self.misc.fetch_message(885984411995234397)
+        # await self.pinHandler.pin(mes)
+
+        # Emergency Manual Thread Pin
+        # mes = await self.misc.get_thread(882727644670599178).fetch_message(895327866701639711)
         # await self.pinHandler.pin(mes)
 
         # history = HistoryManager(self.guild, self.database)
@@ -131,6 +137,10 @@ class Client(discord.Client):
             if channel.name == channel_name:
                 await channel.send(message)
 
+    # noinspection PyMethodMayBeStatic
+    async def on_voice_state_update(self, user, old, new):
+        DataLogger.handle_voice_state_change(user, old, new)
+
     async def join_vc(self, channel_name):
         channels = await self.guild.fetch_channels()
         for channel in channels:
@@ -145,6 +155,7 @@ class Client(discord.Client):
             out += member.display_name + ","
         return bruh + "]"
 
+
 client = Client()
 client.run(key)
-print("MADE IT HERE")
+print("Successfully started bot")

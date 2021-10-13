@@ -37,7 +37,7 @@ class HistoryManager:
         print("MESSAGE COUNT: ", self.message_count)
         self.sort_reactions()
         self.print_reaction_data()
-        await self.send_reaction_data(server_announcements)
+        # await self.send_reaction_data(server_announcements)
         self.print_reaction_dictionary()
 
     async def analyze_channel_history(self, channel: discord.TextChannel):
@@ -50,7 +50,7 @@ class HistoryManager:
         print(getTimeStamp(), "Successfully analyzed", channel.name)
 
     def update_reaction(self, react: discord.Reaction):
-        if react.custom_emoji:
+        if react.is_custom_emoji():
             for reaction in self.reactions:
                 if reaction[0] == str(react.emoji):
                     reaction[1] = react.count + reaction[1]
