@@ -127,28 +127,29 @@ class EmojiListener:
 
     async def handle_replacement(self, response):
         if response.lower() == "yes":
-            self.status = "confirm"
-            for emoji in self.guild.emojis:
-                if emoji.name == self.name:
-                    print(getTimeStamp() + "Replacing emoji with same name")
-                    self.toBeReplaced = emoji
-                    await self.message.channel.send(
-                        "Creating this emoji will overwrite " + str(emoji) + ".  Are you sure you "
-                                                                             "want to do this?  "
-                                                                             "Respond with yes or "
-                                                                             "no.")
-                    return emoji.name
-            for old in self.create_replacement_queue():
-                for emoji in self.guild.emojis:
-                    if emoji.name == old:
-                        print(getTimeStamp() + "Replacing " + emoji.name + " from replacement queue")
-                        self.toBeReplaced = emoji
-                        await self.message.channel.send(
-                            "Creating this emoji will remove " + str(emoji) + ".  Are you sure you "
-                                                                              "want to do this?  "
-                                                                              "Respond with yes or "
-                                                                              "no.")
-                        return emoji.name
+            await self.message.channel.send("Are you sure?? Say \"yes\"")
+            # self.status = "confirm"
+            # for emoji in self.guild.emojis:
+            #     if emoji.name == self.name:
+            #         print(getTimeStamp() + "Replacing emoji with same name")
+            #         self.toBeReplaced = emoji
+            #         await self.message.channel.send(
+            #             "Creating this emoji will overwrite " + str(emoji) + ".  Are you sure you "
+            #                                                                  "want to do this?  "
+            #                                                                  "Respond with yes or "
+            #                                                                  "no.")
+            #         return emoji.name
+            # for old in self.create_replacement_queue():
+            #     for emoji in self.guild.emojis:
+            #         if emoji.name == old:
+            #             print(getTimeStamp() + "Replacing " + emoji.name + " from replacement queue")
+            #             self.toBeReplaced = emoji
+            #             await self.message.channel.send(
+            #                 "Creating this emoji will remove " + str(emoji) + ".  Are you sure you "
+            #                                                                   "want to do this?  "
+            #                                                                   "Respond with yes or "
+            #                                                                   "no.")
+            #             return emoji.name
             return None
         else:
             await send_message(self.message.channel, "Understood and ignored.")
@@ -182,7 +183,7 @@ class EmojiListener:
                                                         "**Description:** " + self.desc + "\n" +
                                                         "**Author:** " + self.message.author.mention + "\n" +
                                                         "**Voting Threshold: ** 15 " + str(posrep) + "s\n" +
-                                                        "**Replaced Emoji:** " + str(self.toBeReplaced) + "\n" +
+                                                        # "**Replaced Emoji:** " + str(self.toBeReplaced) + "\n" +
                                                         "**Vote End** (CST): " + vote_end)
             self.deactivate()
         else:
