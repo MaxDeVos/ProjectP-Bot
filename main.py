@@ -73,7 +73,8 @@ class Client(discord.Client):
                 print(getTimeStamp("SERVER"), "Found Announcements Channel: ", str(self.announcements_channel.id))
                 self.emojiHandler = EmojiHandler(self.guild, self.announcements_channel, self)
 
-            if a.name == "perilous-polls":
+            # MISC
+            if a.name == "nsfw":
                 self.misc = a
                 print(getTimeStamp("SERVER"), "Found Misc Channel: ", str(self.misc.id))
 
@@ -96,19 +97,24 @@ class Client(discord.Client):
             if a.name == "server-announcements":
                 self.fuck = a
 
-        self.emojiHandler.addVoters(await Voting.create_archived_votes(self))
-        self.roleHandler = RoleHandler(self.guild, self.admin_channel, self.roles_channel)
+        # self.emojiHandler.addVoters(await Voting.create_archived_votes(self))
+        # self.roleHandler = RoleHandler(self.guild, self.admin_channel, self.roles_channel)
 
         # m = await self.misc.fetch_message(875120875622518804)
         # await m.reply("ahem")
 
-        # Emergency Manual Pin
-        # mes = await self.misc.fetch_message(885984411995234397)
+        # Emergency Manual Pin - Channel ID Entry
+        # c = await self.guild.fetch_channel(375804979564380171)
+        # mes = await c.fetch_message(918005290543243345)
         # await self.pinHandler.pin(mes)
 
-        # Emergency Manual Thread Pin
-        # mes = await self.misc.get_thread(882727644670599178).fetch_message(895327866701639711)
+        # Emergency Manual Pin - MISC Entry
+        # mes = await self.misc.fetch_message(914314438570569789)
         # await self.pinHandler.pin(mes)
+
+        # Manual Pin Total Manual Entry
+        # ch = await self.guild.fetch_channel(811872434378244106)
+        # await ch.send("https://discord.com/channels/375753471812435968/663584506892124164/914314438570569789\n**Author:** <@155102908281520129>  |  **Channel:** <#663584506892124164>\nMESSAGE")
 
         # history = HistoryManager(self.guild, self.database)
         # await history.analyze_history()

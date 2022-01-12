@@ -86,14 +86,14 @@ class EmojiHandler:
                 if voter.get_message_id() == reaction.message_id:
                     val, image, name, replacement = await voter.add_vote(reaction)
                     if val is True:
-                        if replacement is not None:
-                            print(getTimeStamp("EMOJI"), "Replacing ", replacement.name, "with", name)
-                            for emoji in self.guild.emojis:
-                                if emoji.name == replacement.name:
-                                    print(getTimeStamp("EMOJI"), "Deleting " + emoji.name)
-                                    await emoji.delete()
-                        else:
-                            print("[ERROR] ", getTimeStamp("EMOJI"), "NO REPLACEMENT FOUND!")
+                        # if replacement is not None:
+                        #     print(getTimeStamp("EMOJI"), "Replacing ", replacement.name, "with", name)
+                        #     for emoji in self.guild.emojis:
+                        #         if emoji.name == replacement.name:
+                        #             print(getTimeStamp("EMOJI"), "Deleting " + emoji.name)
+                        #             await emoji.delete()
+                        # else:
+                        #     print("[ERROR] ", getTimeStamp("EMOJI"), "NO REPLACEMENT FOUND!")
 
                         newEmoji = None
                         await self.guild.create_custom_emoji(name=name, image=image)
