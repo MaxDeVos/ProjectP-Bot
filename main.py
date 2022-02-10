@@ -43,17 +43,15 @@ class Client(discord.Client):
 
     def __init__(self):
         super().__init__()
+        self.channelDict = {}
         self.announcements_channel = None
         self.guild = None
         self.pinHandler = None
         self.roleHandler = None
         self.emojiHandler = None
-        self.admin_channel = None
-        self.roles_channel = None
-        self.ant_zone = None
-        self.fuck = None
-        self.misc = None
         self.database = None
+        self.emergencyMention = None
+        self.emergencyResponderMessageID = None
 
     async def on_ready(self):
 
@@ -73,29 +71,21 @@ class Client(discord.Client):
                 print(getTimeStamp("SERVER"), "Found Announcements Channel: ", str(self.announcements_channel.id))
                 self.emojiHandler = EmojiHandler(self.guild, self.announcements_channel, self)
 
-            # MISC
-            if a.name == "nsfw":
-                self.misc = a
-                print(getTimeStamp("SERVER"), "Found Misc Channel: ", str(self.misc.id))
-
             if a.name == "pins":
                 print(getTimeStamp("SERVER"), "Found Pins Channel")
                 self.pinHandler = PinHandler(a, self.guild)
 
-            if a.name == "admin-chat":
-                print(getTimeStamp("SERVER"), "Found Admin Channel")
-                self.admin_channel = a
+            self.channelDict[a.name] = a
 
-            if a.name == "roles":
-                print(getTimeStamp("SERVER"), "Found Roles Channel")
-                self.roles_channel = a
+        print(self.channelDict["general"].id)
 
-            if a.name == "emotions-and-serious-stuff":
-                print(getTimeStamp("SERVER"), "Found Ant Zone Channel")
-                self.ant_zone = a
+        for role in await self.guild.fetch_roles():
+            if role.name == "Emergency":
+                self.emergencyMention = role.mention
 
-            if a.name == "server-announcements":
-                self.fuck = a
+        emKeyReader = open("data/emergencyResponderMessageID.max", "r")
+        self.emergencyResponderMessageID = int(emKeyReader.read())
+        print(self.emergencyResponderMessageID)
 
         # self.emojiHandler.addVoters(await Voting.create_archived_votes(self))
         # self.roleHandler = RoleHandler(self.guild, self.admin_channel, self.roles_channel)
@@ -121,21 +111,26 @@ class Client(discord.Client):
 
     async def on_message(self, message: discord.Message):
         if message.guild.id == active_guild and not message.author.bot:
-            # await LinkShortener.shorten_link(message)
             await LanguageHandler.determine_language(message)
             if self.emojiHandler is not None:
                 await self.emojiHandler.handleEmojiMessage(message)
-            if str(message.content).startswith("!role") and message.channel.id == self.admin_channel.id and not message.author.bot:
+            if str(message.content).startswith(
+                    "!role") and message.channel.id == self.channelDict["admin-chat"].id and not message.author.bot:
                 self.roleHandler.handle_new_role(message)
 
     async def on_raw_reaction_add(self, reaction: discord.RawReactionActionEvent):
+        if reaction.message_id == self.emergencyResponderMessageID and not reaction.member.bot:
+            await reaction.member.add_roles(self.guild.get_role(941400388786061402))
+            print("Gave Emergency to " + reaction.member.display_name)
         if reaction.guild_id == active_guild:
             await self.pinHandler.handlePinReaction(reaction, self)
             if self.emojiHandler is not None:
                 await self.emojiHandler.handleEmojiVoters(reaction)
 
-    # async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
-        # await self.database.addReaction(reaction)
+    async def on_raw_reaction_remove(self, reaction: discord.RawReactionActionEvent):
+        if reaction.message_id == self.emergencyResponderMessageID:
+            mem = await self.guild.fetch_member(reaction.user_id)
+            await mem.remove_roles(self.guild.get_role(941400388786061402))
 
     async def send_message(self, channel_name, message):
         channels = await self.guild.fetch_channels()
