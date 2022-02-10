@@ -1,60 +1,67 @@
+import asyncio
 import io
+import threading
 import time
 import aiohttp
 import discord
+import sched, time
+
+import HistoryManager
+
+s = sched.scheduler(time.time, time.sleep)
 
 
 def getTimeStamp():
     return "[PINS] [" + time.strftime('%Y-%m-%d %H:%M:%S') + "] "
 
 
-def readPins():
-    out = []
-    file = open("data/pins.max", "r")
-    contents = file.read().split(",")
-    for m_id in contents:
-        try:
-            out.append(int(m_id))
-        except ValueError:
-            print("[ERROR] " + getTimeStamp() + "Invalid message ID: " + m_id)
-
-    return out
-
-
-async def writePinToFile(message_id):
-    file = open("data/pins.max", "a")
-    file.write(str(message_id) + ",")
-    file.close()
-
-
 class PinHandler:
+
+    guild: discord.Guild
+    pin_channel: discord.TextChannel
 
     def __init__(self, channel, guild):
         self.pin_threshold = 12
         self.pin_channel = channel
         self.guild = guild
-        self.pinned_messages = readPins()
-
+        self.pins_ready = False
+        self.pinned_messages = []
+        asyncio.get_event_loop().create_task(self.get_pin_history())
         print(getTimeStamp(), "Created Pin Handler")
 
-    async def pin(self, message):
-        print(getTimeStamp(), "Pinning Message From: " + message.author.name)
-        self.pinned_messages.append(message.id)
-        await writePinToFile(message.id)
+    async def get_pin_history(self):
+        async for message in self.pin_channel.history(limit=None, oldest_first=True):
+            if message.author.bot:
+                try:
+                    self.pinned_messages.append(int(message.content.split("\n")[0].split("/")[6]))
+                except:
+                    print("ERROR", getTimeStamp(), "Failed to load previous pin: ", message)
+                    pass
+        self.pins_ready = True
+        # await self.comb_for_missed_pins()
+        print(getTimeStamp(), "Completed Collecting Pin History")
+        print(self.pinned_messages)
 
-        files = []
-        for attachment in message.attachments:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(attachment.url) as resp:
-                    if resp.status != 200:
-                        print(getTimeStamp(), "[ERROR] Couldn't download file")
-                    data = io.BytesIO(await resp.read())
-                    files.append(discord.File(data, attachment.filename))
+    async def pin(self, message, force=False):
+        if not self.pins_ready and not force:
+            print("[ERROR]", getTimeStamp(), "Attempted to pin before PinHandler was ready. You'll have to try again")
+        else:
+            print(getTimeStamp(), "Pinning Message From: " + message.author.name)
+            self.pinned_messages.append(message.id)
 
-        out = str(message.jump_url) + "\n" + "**Author:** " + message.author.mention + \
-              "  |  " + "**Channel:** " + message.channel.mention + "\n" + message.clean_content
+            files = []
+            for attachment in message.attachments:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(attachment.url) as resp:
+                        if resp.status != 200:
+                            print(getTimeStamp(), "[ERROR] Couldn't download file")
+                        data = io.BytesIO(await resp.read())
+                        files.append(discord.File(data, attachment.filename))
 
-        await self.pin_channel.send(out, files=files)
+            out = str(message.jump_url) + "\n" + "**Author:** " + message.author.mention + \
+                  "  |  " + "**Channel:** " + message.channel.mention + "\n" + message.clean_content
+
+            await self.pin_channel.send(out, files=files)
 
     async def handlePinReaction(self, reaction, client):
         channel = client.get_channel(reaction.channel_id)
@@ -62,5 +69,26 @@ class PinHandler:
         if not self.pinned_messages.__contains__(message.id):
             for reaction in message.reactions:
                 if reaction.emoji == "📌":
-                    if reaction.count == self.pin_threshold:
+                    if reaction.count >= self.pin_threshold:
                         await self.pin(message)
+
+    def filterOutPinned(self, message):
+        return message.id not in self.pinned_messages
+
+    async def comb_for_missed_pins(self):
+        to_pin = []
+        for channel in await self.guild.fetch_channels():
+            try:
+                for message in await HistoryManager.get_posts_above_reaction_threshold_channel(channel, self.pinned_messages, 60):
+                    to_pin.append(message)
+                print("Combed Through", channel.name)
+            except AttributeError:
+                pass
+            except discord.errors.Forbidden:
+                pass
+        to_pin = filter(self.filterOutPinned, to_pin)
+        to_pin = sorted(to_pin, key=lambda x: x.created_at.timestamp())
+        for m in to_pin:
+            await self.pin(m)
+            time.sleep(.05)
+

@@ -6,10 +6,45 @@ from typing import Any, Coroutine
 
 import discord
 
+
 def getTimeStamp():
     return "[HISTORY] [" + time.strftime('%Y-%m-%d %H:%M:%S') + "]"
 
-# This file has some comments.  Don't get used to it.
+
+async def get_pinned_messages_time_period(channel: discord.TextChannel, days):
+    pinned = []
+    search_duration = datetime.datetime.now() - datetime.timedelta(days=days)
+    async for message in channel.history(limit=None, after=search_duration):
+        link_split = message.content.split("\n")[0].split("/")
+        og_message_id = link_split[len(link_split) - 1]
+        pinned.append(og_message_id)
+    return pinned
+
+
+async def get_posts_above_reaction_threshold(pinned, channel_or_thread, e, thresh, time_in_days):
+    out = []
+    message: discord.Message
+    search_duration = datetime.datetime.now() - datetime.timedelta(days=time_in_days)
+    async for message in channel_or_thread.history(limit=None, after=search_duration):
+        if str(message.id) not in pinned:
+            for reaction in message.reactions:
+                if reaction.emoji == e and reaction.count >= thresh:
+                    out.append(message)
+    return out
+
+
+async def get_posts_above_reaction_threshold_channel(channel: discord.TextChannel, pinned, days):
+    out = []
+    message: discord.Message
+    for message in await get_posts_above_reaction_threshold(pinned, channel, "📌", 12, days):
+        out.append(message)
+        print(message)
+    for thread in channel.threads:
+        for message in await get_posts_above_reaction_threshold(pinned, thread, "📌", 12, days):
+            out.append(message)
+            print(message)
+    return out
+
 class HistoryManager:
     guild: discord.Guild
 
@@ -22,28 +57,14 @@ class HistoryManager:
 
     async def analyze_history(self):
         pinned = None
-        for channel in self.guild.text_channels:
-            try:
-                if channel.name == "pins":
-                    pinned = await self.get_pinned_messages_time_period(channel, 30)
-                else:
-                    pass
-                    # await self.get_posts_above_reaction_threshold_channel(channel)
-            except discord.errors.Forbidden:
-                print("[ERROR]", getTimeStamp(), "No access to read " + channel.name)
-
-        for c in self.guild.text_channels:
-            try:
-                if c.name == "pins":
-                    pass
-                else:
-                    await self.get_posts_above_reaction_threshold_channel(c, pinned)
-            except discord.errors.Forbidden:
-                print("[ERROR]", getTimeStamp(), "No access to read " + channel.name)
-
-            # If the channel we're reading is server-announcements, save it for later
-            if channel.name == "server-announcements":
-                server_announcements = channel
+        # for c in self.guild.text_channels:
+        #     try:
+        #         if c.name == "pins":
+        #             pass
+        #         else:
+        #             await self.get_posts_above_reaction_threshold_channel(c, pinned)
+        #     except discord.errors.Forbidden:
+        #         print("[ERROR]", getTimeStamp(), "No access to read " + c.name)
 
         # print("MESSAGE COUNT: ", self.message_count)
         # self.sort_reactions()
@@ -55,7 +76,7 @@ class HistoryManager:
         message: discord.Message
         one_month_ago = datetime.datetime.now() - datetime.timedelta(days=90)
         for thread in channel.threads:
-            await self.get_posts_above_reaction_threshold(thread, "📌", 12, 30)
+            await get_posts_above_reaction_threshold(thread, "📌", 12, 30)
         async for message in channel.history(limit=None, after=one_month_ago):
             self.message_count += 1
             for reaction in message.reactions:
@@ -100,29 +121,3 @@ class HistoryManager:
 
         # Send the Monthly Emoji Usage data message to the desired channel
         await channel.send(out)
-
-    async def get_posts_above_reaction_threshold_channel(self, channel: discord.TextChannel, pinned):
-        message: discord.Message
-        print(channel.name)
-        await self.get_posts_above_reaction_threshold(pinned, channel, "📌", 12, 30)
-        for thread in channel.threads:
-            # print(channel.name, thread.name)
-            await self.get_posts_above_reaction_threshold(pinned, thread, "📌", 12, 30)
-
-    async def get_posts_above_reaction_threshold(self, pinned, channel_or_thread, e, thresh, time_in_days):
-        message: discord.Message
-        one_month_ago = datetime.datetime.now() - datetime.timedelta(days=time_in_days)
-        async for message in channel_or_thread.history(limit=None, after=one_month_ago):
-            if str(message.id) not in pinned:
-                for reaction in message.reactions:
-                    if reaction.emoji == e and reaction.count >= thresh:
-                        print(str(message.channel.name),str(message.created_at),str(channel_or_thread.id)+","+str(message.id))
-
-    async def get_pinned_messages_time_period(self, channel: discord.TextChannel, days):
-        pinned = []
-        one_month_ago = datetime.datetime.now() - datetime.timedelta(days=days)
-        async for message in channel.history(limit=None, after=one_month_ago):
-            link_split = message.content.split("\n")[0].split("/")
-            og_message_id = link_split[len(link_split) - 1]
-            pinned.append(og_message_id)
-        return pinned

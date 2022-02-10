@@ -4,11 +4,7 @@ import discord
 
 from EmojiHandler import EmojiHandler
 from PinHandler import PinHandler
-from RoleHandler import RoleHandler
 import DataLogger
-import LinkShortener
-from HistoryManager import HistoryManager
-import Voting
 import LanguageHandler
 
 # TODO role manager
@@ -49,35 +45,20 @@ class Client(discord.Client):
         self.pinHandler = None
         self.roleHandler = None
         self.emojiHandler = None
-        self.database = None
         self.emergencyMention = None
         self.emergencyResponderMessageID = None
 
     async def on_ready(self):
 
-        # self.database = MySQLHandler()
-
         await self.change_presence(activity=discord.Activity(name='Eat The Rich', type=discord.ActivityType.playing))
+
         for n in self.guilds:
-            # if n.id ==
             if n.id == active_guild:
                 self.guild = n
                 print(getTimeStamp("SERVER"), "Found GUILD: " + self.guild.name)
 
         for a in self.guild.text_channels:
-
-            if a.name == "emoji-voting":
-                self.announcements_channel = a
-                print(getTimeStamp("SERVER"), "Found Announcements Channel: ", str(self.announcements_channel.id))
-                self.emojiHandler = EmojiHandler(self.guild, self.announcements_channel, self)
-
-            if a.name == "pins":
-                print(getTimeStamp("SERVER"), "Found Pins Channel")
-                self.pinHandler = PinHandler(a, self.guild)
-
             self.channelDict[a.name] = a
-
-        print(self.channelDict["general"].id)
 
         for role in await self.guild.fetch_roles():
             if role.name == "Emergency":
@@ -87,24 +68,31 @@ class Client(discord.Client):
         self.emergencyResponderMessageID = int(emKeyReader.read())
         print(self.emergencyResponderMessageID)
 
+        self.pinHandler = PinHandler(self.channelDict["pins"], self.guild)
+        print(getTimeStamp("PINS"), "Starting Pin Manager")
+
+        self.emojiHandler = EmojiHandler(self.guild, self.channelDict["emoji-voting"], self)
+        print(getTimeStamp("SERVER"), "Started Emoji Voter")
+
         # self.emojiHandler.addVoters(await Voting.create_archived_votes(self))
         # self.roleHandler = RoleHandler(self.guild, self.admin_channel, self.roles_channel)
 
-        # m = await self.misc.fetch_message(875120875622518804)
-        # await m.reply("ahem")
-
         # Emergency Manual Pin - Channel ID Entry
-        # c = await self.guild.fetch_channel(375804979564380171)
-        # mes = await c.fetch_message(918005290543243345)
-        # await self.pinHandler.pin(mes)
+        # c = await self.guild.fetch_channel(795765266318622761)
+        # mes = await c.fetch_message(812341825292599346)
+        # await self.pinHandler.pin(mes, True)
 
         # Emergency Manual Pin - MISC Entry
-        # mes = await self.misc.fetch_message(914314438570569789)
-        # await self.pinHandler.pin(mes)
+        # mes = await self.channelDict["general"].fetch_message(917194033695178762)
+        # await self.pinHandler.pin(mes, True)
 
-        # Manual Pin Total Manual Entry
+        # Manual Message
         # ch = await self.guild.fetch_channel(811872434378244106)
         # await ch.send("https://discord.com/channels/375753471812435968/663584506892124164/914314438570569789\n**Author:** <@155102908281520129>  |  **Channel:** <#663584506892124164>\nMESSAGE")
+
+        # Manual Reply
+        # m = await self.misc.fetch_message(875120875622518804)
+        # await m.reply("ahem")
 
         # history = HistoryManager(self.guild, self.database)
         # await history.analyze_history()
@@ -159,4 +147,3 @@ class Client(discord.Client):
 
 client = Client()
 client.run(key)
-print("Successfully started bot")
