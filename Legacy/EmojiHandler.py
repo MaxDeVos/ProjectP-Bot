@@ -55,13 +55,13 @@ class EmojiHandler:
             elif self.emoji.status == "prompt":
                 if await self.emoji.handle_replacement(message.content) is None:
                     await self.emoji.final_image_response(message.content)
-                    self.emojiVoters.append(VotingListener(self.emoji, 15, self.client, True))
+                    self.emojiVoters.append(VotingListener(self.emoji, 4, self.client, True))
                     return
                 return
 
             elif self.emoji.status == "confirm":
                 await self.emoji.final_image_response(message.content)
-                self.emojiVoters.append(VotingListener(self.emoji, 15, self.client, True))
+                self.emojiVoters.append(VotingListener(self.emoji, 4, self.client, True))
                 return
 
         # At this point we are free to engage with a new emoji addition
@@ -130,29 +130,31 @@ class EmojiHandler:
         # This is the most malformed bullshit I've ever written.  Good luck future Max.
 
         await message.channel.trigger_typing()
-        user_next_allowed = await self.get_user_allowed_submission_time(message)
 
-        # Check for server cooldown
-        if self.server_cooldown(message) is not None:
+        # Use this to enable cooldowns
+        # user_next_allowed = await self.get_user_allowed_submission_time(message)
 
-            # User and Server cooldown
-            if user_next_allowed >= datetime.datetime.utcnow():
-                print(getTimeStamp("EMOJI") + "USER AND SERVER COOLDOWN")
-                timeDelta = user_next_allowed - datetime.datetime.utcnow()
-                return message.author.mention + "'s Cooldown: *" + self.get_formatted_time(timeDelta) + "*\n" \
-                                    "Server Cooldown: *" + self.get_formatted_time(self.server_cooldown(message)) + "*"
-
-            # Server cooldown
-            else:
-                print(getTimeStamp("EMOJI") + "SERVER COOLDOWN")
-                timeDelta = self.server_cooldown(message)
-                return "Server Cooldown: *" + self.get_formatted_time(timeDelta) + "*"
-
-        # User cooldown
-        if user_next_allowed >= datetime.datetime.utcnow():
-            print(getTimeStamp("EMOJI") + "USER COOLDOWN")
-            timeDelta = user_next_allowed - datetime.datetime.utcnow()
-            return message.author.mention + "'s Cooldown: *" + self.get_formatted_time(timeDelta) + "*"
+        # # Check for server cooldown
+        # if self.server_cooldown(message) is not None:
+        #
+        #     # User and Server cooldown
+        #     if user_next_allowed >= datetime.datetime.utcnow():
+        #         print(getTimeStamp("EMOJI") + "USER AND SERVER COOLDOWN")
+        #         timeDelta = user_next_allowed - datetime.datetime.utcnow()
+        #         return message.author.mention + "'s Cooldown: *" + self.get_formatted_time(timeDelta) + "*\n" \
+        #                             "Server Cooldown: *" + self.get_formatted_time(self.server_cooldown(message)) + "*"
+        #
+        #     # Server cooldown
+        #     else:
+        #         print(getTimeStamp("EMOJI") + "SERVER COOLDOWN")
+        #         timeDelta = self.server_cooldown(message)
+        #         return "Server Cooldown: *" + self.get_formatted_time(timeDelta) + "*"
+        #
+        # # User cooldown
+        # if user_next_allowed >= datetime.datetime.utcnow():
+        #     print(getTimeStamp("EMOJI") + "USER COOLDOWN")
+        #     timeDelta = user_next_allowed - datetime.datetime.utcnow()
+        #     return message.author.mention + "'s Cooldown: *" + self.get_formatted_time(timeDelta) + "*"
 
         return "True"
 

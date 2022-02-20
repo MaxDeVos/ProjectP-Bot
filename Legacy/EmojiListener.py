@@ -127,7 +127,7 @@ class EmojiListener:
 
     async def handle_replacement(self, response):
         if response.lower() == "yes":
-            await self.message.channel.send("Are you sure?? Say \"yes\"")
+            # await self.message.channel.send("Are you sure?? Say \"yes\"")
             # self.status = "confirm"
             # for emoji in self.guild.emojis:
             #     if emoji.name == self.name:

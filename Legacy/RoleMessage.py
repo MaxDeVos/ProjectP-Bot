@@ -23,7 +23,7 @@ class RoleMessage:
         else:
             try:
                 self.guild = kwargs.get("guild")
-                self.legacy = kwargs.get("legacy")
+                self.legacy = kwargs.get("")
             except Exception:
                 print(getTimeStamp(), "Failed to read RoleMessage from file")
 

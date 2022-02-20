@@ -9,7 +9,7 @@ class ImageProcessor:
         self.original_name = name
         self.name = "images/" + name + "_proposed"
         self.image = image
-        if image.height <= 32 and image.width <= 32:
+        if image.height <= 128 and image.width <= 128:
             self.image_state = "fit"
         elif image.height is image.width:
             self.image_state = "square"
@@ -22,7 +22,7 @@ class ImageProcessor:
     async def downscale(self):
         await self.download_image()
         self.img = cv2.imread(self.name + ".png",-1)
-        self.img = cv2.resize(self.img, (32,32), interpolation=cv2.INTER_AREA)
+        self.img = cv2.resize(self.img, (128,128), interpolation=cv2.INTER_AREA)
         cv2.imwrite(self.name + ".png", self.img)
         is_success, im_buf_arr = cv2.imencode(".png", self.img)
         self.bytes = im_buf_arr.tobytes()
@@ -37,12 +37,12 @@ class ImageProcessor:
         height = self.img.shape[0]
         if width > height:
             ratio = height / width
-            height = int(32 * ratio)
-            width = 32
+            height = int(128 * ratio)
+            width = 128
         else:
             ratio = width / height
-            width = int(32 * ratio)
-            height = 32
+            width = int(128 * ratio)
+            height = 128
         self.img = cv2.resize(self.img, (width, height), interpolation=cv2.INTER_AREA)
         cv2.imwrite(self.name + ".png", self.img)
         is_success, im_buf_arr = cv2.imencode(".png", self.img)

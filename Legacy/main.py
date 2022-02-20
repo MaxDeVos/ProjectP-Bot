@@ -2,7 +2,7 @@ import time
 
 import discord
 
-from EmojiHandler import EmojiHandler
+from Legacy.EmojiHandler import EmojiHandler
 from PinHandler import PinHandler
 import DataLogger
 import LanguageHandler
@@ -12,33 +12,32 @@ import LanguageHandler
 # ---------------- History Manager ---------------------
 # TODO give HistoryManager its own thread to avoid blocking responses while parsing server data
 # TODO automatically collect and report emoji usage on the 1st day of every month
-# TODO automatically update "chopping block" based on emoji usage data
 
-
-f = open("data/key.txt", "r")
+f = open("data/test_key.txt", "r")
+# f = open("data/key.txt", "r")
 key = f.read()
 
 # g = open("data/guild.max", "r")
 # active_guild = int(g.read())
 
 # Dangerous Men
-active_guild = 375753471812435968
+# active_guild = 375753471812435968
 
 # Test Server
 # noinspection PyRedeclaration
-# active_guild = 782870393517768704
+active_guild = 782870393517768704
 
 
 def getTimeStamp(stamp):
     return "[" + stamp + "] [" + time.strftime('%Y-%m-%d %H:%M:%S') + "]"
 
 
-class Client(discord.Client):
+class Client(discord.Bot):
 
     guild: discord.Guild
 
     def __init__(self):
-        super().__init__()
+        super().__init__("/")
         self.channelDict = {}
         self.announcements_channel = None
         self.guild = None
@@ -78,8 +77,14 @@ class Client(discord.Client):
         # self.roleHandler = RoleHandler(self.guild, self.admin_channel, self.roles_channel)
 
         # Emergency Manual Pin - Channel ID Entry
-        # c = await self.guild.fetch_channel(795765266318622761)
-        # mes = await c.fetch_message(812341825292599346)
+        # c = await self.guild.fetch_channel(375804979564380171)
+        # mes = await c.fetch_message(923809486622318592)
+        # await self.pinHandler.pin(mes, True)
+
+        # Emergency Manual Pin - Channel + Thread ID Entry
+        # c = await self.guild.fetch_channel(375804979564380171)
+        # c = c.get_thread(874745495619272724)
+        # mes = await c.fetch_message(923809486622318592)
         # await self.pinHandler.pin(mes, True)
 
         # Emergency Manual Pin - MISC Entry
@@ -87,8 +92,8 @@ class Client(discord.Client):
         # await self.pinHandler.pin(mes, True)
 
         # Manual Message
-        # ch = await self.guild.fetch_channel(811872434378244106)
-        # await ch.send("https://discord.com/channels/375753471812435968/663584506892124164/914314438570569789\n**Author:** <@155102908281520129>  |  **Channel:** <#663584506892124164>\nMESSAGE")
+        # ch = await self.guild.fetch_channel(813312781906346024)
+        # await ch.send("TEST")
 
         # Manual Reply
         # m = await self.misc.fetch_message(875120875622518804)
@@ -146,4 +151,9 @@ class Client(discord.Client):
 
 
 client = Client()
+
+@client.slash_command(guild_ids=[782870393517768704])
+async def testt(ctx):
+    await ctx.respond("I did something")
+
 client.run(key)

@@ -35,12 +35,11 @@ class PinHandler:
                 try:
                     self.pinned_messages.append(int(message.content.split("\n")[0].split("/")[6]))
                 except:
-                    print("ERROR", getTimeStamp(), "Failed to load previous pin: ", message)
+                    # print("ERROR", getTimeStamp(), "Failed to load previous pin: ", message)
                     pass
         self.pins_ready = True
         # await self.comb_for_missed_pins()
         print(getTimeStamp(), "Completed Collecting Pin History")
-        print(self.pinned_messages)
 
     async def pin(self, message, force=False):
         if not self.pins_ready and not force:
