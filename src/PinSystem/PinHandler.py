@@ -2,8 +2,8 @@ import asyncio
 import io
 import aiohttp
 import discord
-import sched, time
-
+import sched
+import time
 from src.PinSystem.TimestampGenerator import TimestampGenerator
 
 s = sched.scheduler(time.time, time.sleep)
@@ -22,7 +22,6 @@ class PinHandler:
         self.pins_ready = False
         self.pinned_messages = []
         asyncio.get_event_loop().create_task(self.get_pin_history())
-        print(ts.get_time_stamp(), "Created Pin Handler")
 
     async def get_pin_history(self):
         async for message in self.pin_channel.history(limit=None, oldest_first=True):
@@ -35,6 +34,7 @@ class PinHandler:
         self.pins_ready = True
         # await self.comb_for_missed_pins()
         print(ts.get_time_stamp(), "Completed Collecting Pin History")
+        print(ts.get_time_stamp(), "Successfully Started Pin Manager")
 
     async def pin(self, message, force=False):
         if not self.pins_ready and not force:

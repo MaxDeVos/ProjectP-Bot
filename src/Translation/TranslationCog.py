@@ -5,16 +5,16 @@ import discord
 import re
 from difflib import SequenceMatcher
 
+from src.PinSystem.TimestampGenerator import TimestampGenerator
+
 translator = Translator()
+ts = TimestampGenerator("LANG")
 
 
 class TranslationCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.slash_command(guild_ids=[782870393517768704])  # Create a slash command for the supplied guilds.
-    async def hello(self, ctx):
-        await ctx.respond("Hi, this is a slash command from a cog!")
+        print(ts.get_time_stamp(), "Successfully Started Translation Engine")
 
     @commands.Cog.listener()
     async def on_message(self, message):

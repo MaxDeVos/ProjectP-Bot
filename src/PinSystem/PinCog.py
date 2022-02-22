@@ -17,10 +17,6 @@ class PinCog(commands.Cog):
         print(ts.get_time_stamp(), "Starting Pin Manager")
         self.pinHandler = PinHandler(self.parent.channelDict["pins"], self.parent.guild)
 
-    @commands.slash_command(guild_ids=[782870393517768704])  # Create a slash command for the supplied guilds.
-    async def hello(self, ctx):
-        await ctx.respond("Hi, this is a slash command from a cog!")
-
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, reaction: discord.RawReactionActionEvent):
         if reaction.guild_id == self.parent.guild.id:
