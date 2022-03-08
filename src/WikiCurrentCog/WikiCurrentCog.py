@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 from src.TimestampGenerator import TimestampGenerator
-from src.WikiCurrentCog.WikipediaParser import WikipediaParser
+from src.WikiCurrentCog.WikipediaPageParser import WikipediaParser
 
 ts = TimestampGenerator("NEWS")
 
