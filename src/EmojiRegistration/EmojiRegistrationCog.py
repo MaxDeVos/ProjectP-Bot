@@ -2,9 +2,9 @@ from discord import ApplicationContext
 from discord.ext import commands
 
 from src import active_guild_id
+from src.EmojiRegistration.EmojiVoter import EmojiVoter
 from src.EmojiRegistration.MainMenuUI import EmojiSelectionView
-from src.EmojiRegistration.NewEmojiUI import NewEmojiModal
-from src.PinSystem.TimestampGenerator import TimestampGenerator
+from src.TimestampGenerator import TimestampGenerator
 
 ts = TimestampGenerator("EMOJ")
 
@@ -25,4 +25,8 @@ class EmojiRegistrationCog(commands.Cog):
         # Wait for the View to stop listening for input...
         await view.wait()
         await fetched_message.edit_original_message(view=None)
+
+    @commands.command()
+    async def create_new_emoji_voter(self, ctx: ApplicationContext, embed):
+        voter = EmojiVoter(embed=embed, channel=self.emoji_channel)
 

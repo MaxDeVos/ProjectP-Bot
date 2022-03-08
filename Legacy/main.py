@@ -13,19 +13,19 @@ import LanguageHandler
 # TODO give HistoryManager its own thread to avoid blocking responses while parsing server data
 # TODO automatically collect and report emoji usage on the 1st day of every month
 
-f = open("data/test_key.txt", "r")
-# f = open("data/key.txt", "r")
+# f = open("data/test_key.txt", "r")
+f = open("data/key.txt", "r")
 key = f.read()
 
 # g = open("data/guild.max", "r")
 # active_guild = int(g.read())
 
 # Dangerous Men
-# active_guild = 375753471812435968
+active_guild = 375753471812435968
 
 # Test Server
 # noinspection PyRedeclaration
-active_guild = 782870393517768704
+# active_guild = 782870393517768704
 
 
 def getTimeStamp(stamp):

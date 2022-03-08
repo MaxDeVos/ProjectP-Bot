@@ -3,8 +3,9 @@ from discord.ext import commands
 from src import active_guild_id
 from src.EmojiRegistration.EmojiRegistrationCog import EmojiRegistrationCog
 from src.PinSystem.PinCog import PinCog
-from src.PinSystem.TimestampGenerator import TimestampGenerator
+from src.TimestampGenerator import TimestampGenerator
 from src.Translation.TranslationCog import TranslationCog
+from src.WikiCurrentCog.WikiCurrentCog import WikiCurrentCog
 
 ts = TimestampGenerator("BANE")
 
@@ -30,6 +31,7 @@ class Bot(commands.Bot):
         self.add_cog(PinCog(bot, self))
         self.add_cog(TranslationCog(bot))
         self.add_cog(EmojiRegistrationCog(bot, self))
+        self.add_cog(WikiCurrentCog(bot, self))
 
 
 # Read API key from file

@@ -4,7 +4,7 @@ import aiohttp
 import discord
 import sched
 import time
-from src.PinSystem.TimestampGenerator import TimestampGenerator
+from src.TimestampGenerator import TimestampGenerator
 
 s = sched.scheduler(time.time, time.sleep)
 ts = TimestampGenerator("PINS")

@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 from src.PinSystem.PinHandler import PinHandler
-from src.PinSystem.TimestampGenerator import TimestampGenerator
+from src.TimestampGenerator import TimestampGenerator
 
 ts = TimestampGenerator("PINS")
 

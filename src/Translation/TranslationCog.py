@@ -5,7 +5,7 @@ import discord
 import re
 from difflib import SequenceMatcher
 
-from src.PinSystem.TimestampGenerator import TimestampGenerator
+from src.TimestampGenerator import TimestampGenerator
 
 translator = Translator()
 ts = TimestampGenerator("LANG")
