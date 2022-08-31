@@ -1,1 +1,2 @@
 active_guild_id = 782870393517768704
+# active_guild_id = 375753471812435968

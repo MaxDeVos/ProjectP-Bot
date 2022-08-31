@@ -4,6 +4,8 @@ import aiohttp
 import discord
 import sched
 import time
+
+import src.PinSystem.HistoryManager
 from src.TimestampGenerator import TimestampGenerator
 
 s = sched.scheduler(time.time, time.sleep)
@@ -69,20 +71,20 @@ class PinHandler:
     def filterOutPinned(self, message):
         return message.id not in self.pinned_messages
 
-    # async def comb_for_missed_pins(self):
-    #     to_pin = []
-    #     for channel in await self.guild.fetch_channels():
-    #         try:
-    #             for message in await HistoryManager.get_posts_above_reaction_threshold_channel(channel, self.pinned_messages, 60):
-    #                 to_pin.append(message)
-    #             print("Combed Through", channel.name)
-    #         except AttributeError:
-    #             pass
-    #         except discord.errors.Forbidden:
-    #             pass
-    #     to_pin = filter(self.filterOutPinned, to_pin)
-    #     to_pin = sorted(to_pin, key=lambda x: x.created_at.timestamp())
-    #     for m in to_pin:
-    #         await self.pin(m)
-    #         time.sleep(.05)
-    #
+    async def comb_for_missed_pins(self):
+        to_pin = []
+        for channel in await self.guild.fetch_channels():
+            try:
+                for message in await src.PinSystem.HistoryManager.get_posts_above_reaction_threshold_channel(channel, self.pinned_messages, 6):
+                    to_pin.append(message)
+                print("Combed Through", channel.name)
+            except AttributeError:
+                pass
+            except discord.errors.Forbidden:
+                pass
+        to_pin = filter(self.filterOutPinned, to_pin)
+        to_pin = sorted(to_pin, key=lambda x: x.created_at.timestamp())
+        for m in to_pin:
+            await self.pin(m)
+            time.sleep(.05)
+

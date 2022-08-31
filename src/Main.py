@@ -19,8 +19,13 @@ class Bot(commands.Bot):
 
     async def on_ready(self):
         # Find guild that matches active_guild_id
-        self.guild = [guild for guild in self.guilds if guild.id == active_guild_id][0]
-        print(ts.get_time_stamp(), "Found Active Guild: " + self.guild.name)
+        # self.guild = [guild for guild in self.guilds if guild.id == active_guild_id]
+        for guild in self.guilds:
+            if guild.id == active_guild_id:
+                self.guild = guild
+                print(f"Found Guild {guild.name}")
+                break
+        # print(ts.get_time_stamp(), "Found Active Guild: " + self.guild.name)
 
         # Populate channelDict for future convenience
         for a in self.guild.text_channels:
@@ -30,9 +35,17 @@ class Bot(commands.Bot):
         print(ts.get_time_stamp(), 'Starting Cogs')
         self.add_cog(PinCog(bot, self))
         self.add_cog(TranslationCog(bot))
-        self.add_cog(EmojiRegistrationCog(bot, self))
-        self.add_cog(WikiCurrentCog(bot, self))
+        # self.add_cog(EmojiRegistrationCog(bot, self))
+        # self.add_cog(WikiCurrentCog(bot, self))
 
+        # Send Message
+        # ch = await self.fetch_channel(852322660125114398)
+        # await ch.send("I'm back, asswipes")
+
+        # Add reaction
+        # ch = await self.fetch_channel(852322660125114398)
+        # msg = await ch.fetch_message(959300803972190259)
+        # await msg.add_reaction("🟠")
 
 # Read API key from file
 f = open("data/test_key.txt", "r")
