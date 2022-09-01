@@ -7,3 +7,4 @@ data/test_key.txt
 *.png
 *.jpg
 *.jpeg
+/venv/

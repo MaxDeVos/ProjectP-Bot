@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-from src.GuildData import active_guild_id
+from src import active_guild_id
 from src.EmojiRegistration.EmojiRegistrationCog import EmojiRegistrationCog
 from src.PinSystem.PinCog import PinCog
 from src.TimestampGenerator import TimestampGenerator
