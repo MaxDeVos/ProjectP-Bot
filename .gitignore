@@ -8,3 +8,4 @@ data/test_key.txt
 *.jpg
 *.jpeg
 /venv/
+/logs/*
