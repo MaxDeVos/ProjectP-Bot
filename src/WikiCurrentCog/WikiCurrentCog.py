@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 import discord
 from discord.ext import commands
@@ -16,7 +17,7 @@ class WikiCurrentCog(commands.Cog):
         self.bot = bot
         self.parent = parent
         self.wiki_parser = WikipediaParser()
-        print(ts.get_time_stamp(), "Starting Wiki Current Events Cog")
+        logging.info(f"{ts.get_time_stamp()} Starting Wiki Current Events Cog")
         asyncio.get_event_loop().create_task(self.send_latest_news())
 
     async def send_latest_news(self):

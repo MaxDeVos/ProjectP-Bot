@@ -1,3 +1,5 @@
+import logging
+
 import discord
 from discord.ext import commands
 
@@ -12,4 +14,4 @@ class RoleManagerCog(commands.Cog):
     def __init__(self, bot, parent):
         self.bot = bot
         self.parent = parent
-        print(ts.get_time_stamp(), "Starting Role Manager")
+        logging.info(f"{ts.get_time_stamp()} Starting Role Manager")

@@ -1,3 +1,5 @@
+import logging
+
 from discord import ApplicationContext
 from discord.ext import commands
 
@@ -15,7 +17,7 @@ class EmojiRegistrationCog(commands.Cog):
         self.bot = bot
         self.parent = parent
         self.emoji_channel = self.parent.channelDict["emoji-voting"]
-        print(ts.get_time_stamp(), "Starting Emoji Registration System")
+        logging.info(f"{ts.get_time_stamp()} Starting Emoji Registration System")
 
     @commands.slash_command(guild_ids=[active_guild_id])
     async def submit_emoji(self, ctx: ApplicationContext):

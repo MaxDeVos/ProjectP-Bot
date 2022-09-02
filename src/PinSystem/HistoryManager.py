@@ -1,4 +1,6 @@
 import datetime
+import logging
+
 import emoji
 import time
 from operator import itemgetter
@@ -38,11 +40,11 @@ async def get_posts_above_reaction_threshold_channel(channel: discord.TextChanne
     message: discord.Message
     for message in await get_posts_above_reaction_threshold(pinned, channel, "📌", 12, days):
         out.append(message)
-        print(message)
+        logging.info(message)
     for thread in channel.threads:
         for message in await get_posts_above_reaction_threshold(pinned, thread, "📌", 12, days):
             out.append(message)
-            print(message)
+            logging.info(message)
     return out
 
 
@@ -65,9 +67,9 @@ class HistoryManager:
         #         else:
         #             await self.get_posts_above_reaction_threshold_channel(c, pinned)
         #     except discord.errors.Forbidden:
-        #         print("[ERROR]", getTimeStamp(), "No access to read " + c.name)
+        #         logging.info("[ERROR]", getTimeStamp(), "No access to read " + c.name)
 
-        # print("MESSAGE COUNT: ", self.message_count)
+        # logging.info("MESSAGE COUNT: ", self.message_count)
         # self.sort_reactions()
         # self.print_reaction_data()
         # # await self.send_reaction_data(server_announcements)
@@ -82,7 +84,7 @@ class HistoryManager:
             self.message_count += 1
             for reaction in message.reactions:
                 self.update_reaction(reaction)
-        print(getTimeStamp(), "Successfully analyzed", channel.name)
+        logging.info(f"{getTimeStamp()} Successfully analyzed {channel.name} ")
 
     def update_reaction(self, react: discord.Reaction):
         if react.is_custom_emoji():
@@ -100,11 +102,11 @@ class HistoryManager:
 
     def print_reaction_data(self):
         for reaction in self.reactions:
-            print(reaction[0] + "," + str(reaction[1]))
+            logging.info(f"{reaction[0]}: {str(reaction[1])}")
 
     def print_reaction_dictionary(self):
         for entry in self.reaction_dict.items():
-            print("['" + str(entry[0].split(":")[0]) + "', '" + str(entry[0].split(":")[1]) + "', " + str(entry[1]) + "],")
+            logging.info("['" + str(entry[0].split(":")[0]) + "', '" + str(entry[0].split(":")[1]) + "', " + str(entry[1]) + "],")
 
     async def send_reaction_data(self, channel: discord.TextChannel):
         out = "**[Monthly Emoji Usage]**\n"

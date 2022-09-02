@@ -1,3 +1,5 @@
+import logging
+
 import discord
 from discord.ext import commands
 
@@ -14,7 +16,7 @@ class PinCog(commands.Cog):
         self.bot = bot
         self.parent = parent
         self.pinHandler = None
-        print(ts.get_time_stamp(), "Starting Pin Manager")
+        logging.info(f"{ts.get_time_stamp()} Starting Pin Manager")
         self.pinHandler = PinHandler(self.parent.channelDict["pins"], self.parent.guild)
 
     @commands.Cog.listener()

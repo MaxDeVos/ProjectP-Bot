@@ -2,7 +2,7 @@ import time
 
 
 def get_time_stamp(stamp):
-    return "[" + stamp + "] [" + time.strftime('%Y-%m-%d %H:%M:%S') + "]"
+    return f"[{stamp}] [{time.strftime('%Y-%m-%d %H:%M:%S')}]"
 
 
 class TimestampGenerator:

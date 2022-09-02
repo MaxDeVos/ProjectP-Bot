@@ -1,6 +1,7 @@
+import logging
+
 from discord.ext import commands
 from googletrans import Translator
-import time
 import discord
 import re
 from difflib import SequenceMatcher
@@ -14,16 +15,12 @@ ts = TimestampGenerator("LANG")
 class TranslationCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        print(ts.get_time_stamp(), "Successfully Started Translation Engine")
+        logging.info(f"{ts.get_time_stamp()} Successfully Started Translation Engine")
 
     @commands.Cog.listener()
     async def on_message(self, message):
         if not message.author.bot:
             await handle_translation(message)
-
-
-def getTimeStamp():
-    return "[LANGUAGE] [" + time.strftime('%Y-%m-%d %H:%M:%S') + "] "
 
 
 async def handle_translation(message):
@@ -35,7 +32,7 @@ async def handle_translation(message):
         if lang.lang == "es" or lang.lang == "de":
 
             if determinePermissions(message, lang.lang):
-                print(getTimeStamp() + message.author.name + " to ", lang.lang, ":", content)
+                logging.info(f"{ts.get_time_stamp()} {message.author.name} to {lang.lang} : {content}")
                 translation = translator.translate(content).text
 
                 similarity_index = similar(str(translation).lower(), str(content.lower()))
@@ -47,11 +44,11 @@ async def handle_translation(message):
                     await message.reply("**Translation:  **" + str(emojied_translation).replace("things", "stuff"),
                                         mention_author=False)
             else:
-                print(getTimeStamp() + "Denied", message.author.name, "translation to", lang.lang)
+                logging.info(f"{ts.get_time_stamp()} Denied {message.author.name} translation to {lang.lang}")
     except TypeError:
         return
     except Exception as e:
-        print("[ERROR] " + getTimeStamp() + str(e))
+        logging.error(f"{ts.get_time_stamp()} {str(e)}")
 
 
 def similar(a, b):
@@ -70,7 +67,7 @@ def replenesh_emojis(message: discord.Message, content):
     guild: discord.Guild
     guild = message.guild
 
-    print(content)
+    logging.info(content)
     i = 0
     for match in re.findall("(?<=<)(.*?)(?=>)", content):
         match = "<" + match + ">"

@@ -1,5 +1,7 @@
 import asyncio
 import io
+import logging
+
 import aiohttp
 import discord
 import sched
@@ -31,18 +33,18 @@ class PinHandler:
                 try:
                     self.pinned_messages.append(int(message.content.split("\n")[0].split("/")[6]))
                 except:
-                    # print("ERROR", getTimeStamp(), "Failed to load previous pin: ", message)
+                    # logging.info("ERROR", getTimeStamp(), "Failed to load previous pin: ", message)
                     pass
         self.pins_ready = True
         # await self.comb_for_missed_pins()
-        print(ts.get_time_stamp(), "Completed Collecting Pin History")
-        print(ts.get_time_stamp(), "Successfully Started Pin Manager")
+        logging.info(f"{ts.get_time_stamp()} Completed Collecting Pin History")
+        logging.info(f"{ts.get_time_stamp()} Successfully Started Pin Manager")
 
     async def pin(self, message, force=False):
         if not self.pins_ready and not force:
-            print("[ERROR]", ts.get_time_stamp(), "Attempted to pin before PinHandler was ready. You'll have to try again")
+            logging.error(f"{ts.get_time_stamp()} Attempted to pin before PinHandler was ready. You'll have to try again")
         else:
-            print(ts.get_time_stamp(), "Pinning Message From: " + message.author.name)
+            logging.info(f"{ts.get_time_stamp()} Pinning Message From: " + message.author.name)
             self.pinned_messages.append(message.id)
 
             files = []
@@ -50,7 +52,7 @@ class PinHandler:
                 async with aiohttp.ClientSession() as session:
                     async with session.get(attachment.url) as resp:
                         if resp.status != 200:
-                            print(ts.get_time_stamp(), "[ERROR] Couldn't download file")
+                            logging.error(f"{ts.get_time_stamp()} Couldn't download file")
                         data = io.BytesIO(await resp.read())
                         files.append(discord.File(data, attachment.filename))
 
@@ -77,7 +79,7 @@ class PinHandler:
             try:
                 for message in await src.PinSystem.HistoryManager.get_posts_above_reaction_threshold_channel(channel, self.pinned_messages, 6):
                     to_pin.append(message)
-                print("Combed Through", channel.name)
+                logging.info("Combed Through", channel.name)
             except AttributeError:
                 pass
             except discord.errors.Forbidden:
