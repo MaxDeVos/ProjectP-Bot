@@ -18,7 +18,7 @@ else:
     logging.info("RUNNING IN TESTING")
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="[%(levelname)s] %(message)s",
     handlers=[
         logging.FileHandler(f'logs/LOG-{datetime.now().strftime("%Y-%m-%d %H_%M_%S")}.log'),
