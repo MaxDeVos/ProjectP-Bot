@@ -30,7 +30,7 @@ if len(sys.argv) > 1:
         production = True
         logging.info(f"{ts.get_time_stamp()} RUNNING IN PRODUCTION")
     except Exception as e:
-        pass
+        logging.error(f"FAILED TO FIND DIRECTORY: {sys.argv[1]}")
 else:
     active_guild_id = test_guild_id
     logging.info(f"{ts.get_time_stamp()} RUNNING IN TESTING")
