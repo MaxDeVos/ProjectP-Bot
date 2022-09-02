@@ -3,14 +3,19 @@ import os
 import sys
 
 from discord.ext import commands
-
-from src import active_guild_id, test_guild_id
-from src.EmojiRegistration.EmojiRegistrationCog import EmojiRegistrationCog
-from src.PinSystem.PinCog import PinCog
-from src.TimestampGenerator import TimestampGenerator
-from src.Translation.TranslationCog import TranslationCog
-from src.WikiCurrentCog.WikiCurrentCog import WikiCurrentCog
 from datetime import datetime
+
+production = False
+if len(sys.argv) > 1:
+    try:
+        os.chdir(sys.argv[1])
+        production = True
+        logging.info("RUNNING IN PRODUCTION")
+    except Exception as e:
+        logging.error(f"FAILED TO FIND DIRECTORY: {sys.argv[1]}")
+else:
+    # active_guild_id = test_guild_id
+    logging.info("RUNNING IN TESTING")
 
 logging.basicConfig(
     level=logging.INFO,
@@ -21,19 +26,14 @@ logging.basicConfig(
     ]
 )
 
-ts = TimestampGenerator("BANE")
+from src import active_guild_id, test_guild_id
+from src.EmojiRegistration.EmojiRegistrationCog import EmojiRegistrationCog
+from src.PinSystem.PinCog import PinCog
+from src.TimestampGenerator import TimestampGenerator
+from src.Translation.TranslationCog import TranslationCog
+from src.WikiCurrentCog.WikiCurrentCog import WikiCurrentCog
 
-production = False
-if len(sys.argv) > 1:
-    try:
-        os.chdir(sys.argv[1])
-        production = True
-        logging.info(f"{ts.get_time_stamp()} RUNNING IN PRODUCTION")
-    except Exception as e:
-        logging.error(f"FAILED TO FIND DIRECTORY: {sys.argv[1]}")
-else:
-    active_guild_id = test_guild_id
-    logging.info(f"{ts.get_time_stamp()} RUNNING IN TESTING")
+ts = TimestampGenerator("BANE")
 
 
 class Bot(commands.Bot):
