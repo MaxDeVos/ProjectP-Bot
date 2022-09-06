@@ -20,7 +20,7 @@ class PinHandler:
     pin_channel: discord.TextChannel
 
     def __init__(self, channel, guild):
-        self.pin_threshold = 1
+        self.pin_threshold = 12
         self.pin_channel = channel
         self.guild = guild
         self.pins_ready = False
