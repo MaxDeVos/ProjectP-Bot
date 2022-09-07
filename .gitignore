@@ -1,0 +1,11 @@
+data/key.txt
+data/test_key.txt
+/.idea/
+/Legacy/pycord/
+/Legacy/
+*.pyc
+*.png
+*.jpg
+*.jpeg
+/venv/
+/logs/*
