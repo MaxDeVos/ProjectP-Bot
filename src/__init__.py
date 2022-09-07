@@ -1,2 +1,3 @@
-active_guild_id = 375753471812435968
+active_guild_id = 782870393517768704
 test_guild_id = 782870393517768704
+production_guild_id = 375753471812435968

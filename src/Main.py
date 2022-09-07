@@ -1,9 +1,15 @@
 import logging
 import os
 import sys
+
+from discord import ApplicationContext
 from discord.ext import commands
 from datetime import datetime
-from src import active_guild_id, test_guild_id
+
+import src
+from src import active_guild_id, test_guild_id, PrinterStatus
+from src.PrinterStatus.MainMenu import MainMenu
+from src.PrinterStatus.PrinterStatusCog import PrinterStatusCog
 from src.TimestampGenerator import TimestampGenerator
 
 logging.basicConfig(
@@ -33,6 +39,7 @@ ts = TimestampGenerator("BOT")
 class Bot(commands.Bot):
 
     def __init__(self, *args, **kwargs):
+        self.debug_guilds = [active_guild_id]
         self.guild = None
         self.channelDict = {}
         super().__init__(*args, **kwargs)
@@ -52,7 +59,8 @@ class Bot(commands.Bot):
 
         # Start cogs
         logging.info(f"{ts.get_time_stamp()} Starting Cogs")
-        # self.add_cog(EmojiRegistrationCog(bot, self))
+        self.add_cog(PrinterStatusCog(bot, self))
+        print(self.cogs)
 
         # Send Message
         # ch = await self.fetch_channel(852322660125114398)
@@ -74,3 +82,10 @@ key = f.read()
 # Create and start Bane Bot
 bot = Bot()
 bot.run(key)
+# bot.load_extension("src.PrinterStatus.PrinterStatusCog")
+# bot.extensions.items().
+
+
+# @bot.command(description="Test Command")
+# async def test(ctx: ApplicationContext):
+#     await ctx.send_response("GAMING", view=MainMenu())
