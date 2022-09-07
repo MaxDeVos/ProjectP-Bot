@@ -70,9 +70,9 @@ class Bot(commands.Bot):
 
 # Read API key from file
 if production:
-    f = open("data/key.txt", "r")
+    f = open("key.txt", "r")
 else:
-    f = open("data/test_key.txt", "r")
+    f = open("test_key.txt", "r")
 key = f.read()
 
 # Create and start Bane Bot
