@@ -28,10 +28,7 @@ logging.basicConfig(
 
 from src import active_guild_id, test_guild_id
 from src.EmojiRegistration.EmojiRegistrationCog import EmojiRegistrationCog
-from src.PinSystem.PinCog import PinCog
 from src.TimestampGenerator import TimestampGenerator
-from src.Translation.TranslationCog import TranslationCog
-from src.WikiCurrentCog.WikiCurrentCog import WikiCurrentCog
 
 ts = TimestampGenerator("BANE")
 
@@ -58,8 +55,6 @@ class Bot(commands.Bot):
 
         # Start cogs
         logging.info(f"{ts.get_time_stamp()} Starting Cogs")
-        self.add_cog(PinCog(bot, self))
-        self.add_cog(TranslationCog(bot))
         # self.add_cog(EmojiRegistrationCog(bot, self))
         # self.add_cog(WikiCurrentCog(bot, self))
 
