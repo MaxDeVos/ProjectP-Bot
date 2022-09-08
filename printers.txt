@@ -1,14 +1,14 @@
-Candice (CR-10)
-Phineas (Ender)
-Ferb (Ender)
-Michelangelo (Lulz Taz 6S)
-Raphael (Lulz Taz 6S)
-Leonardo (Lulz Taz 6S)
-Donatello (Lulz Taz 6S)
-Two Face (Lulz Taz 6S)
-Tom (Lulz Mini)
-Jerry (Lulz Mini)
-Sully (CR-10S)
-Big Hoss (CR-10S)
-Paul Bunyon (Little Monster)
-Fridge (Raise N2+)
+1|Candice|CR-10|2|155102908281520129|FUCKED
+2|Phineas|Ender|2|155102908281520129|FUCKED
+3|Ferb|Ender|1|155102908281520129|1662690548
+4|Michelangelo|Lulz Taz 6S|1|155102908281520129|1662776948
+5|Raphael|Lulz Taz 6S|1|155102908281520129|1662690548
+6|Leonardo|Lulz Taz 6S|0||
+7|Donatello|Lulz Taz 6S|0||
+8|Two Face|Lulz Taz 6S|0||
+9|Tom|Lulz Mini|0||
+10|Jerry|Lulz Mini|0||
+11|Sully|CR-10S|0||
+12|Big Hoss|CR-10S|0||
+13|Paul Bunyon|Little Monster|2|155102908281520129|FUCKED
+14|Fridge|Raise N2+|0||

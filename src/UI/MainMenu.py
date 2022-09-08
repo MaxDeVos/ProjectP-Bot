@@ -1,16 +1,7 @@
 import discord
-from discord import SelectOption, ButtonStyle, ApplicationContext
+from discord import ButtonStyle, ApplicationContext
 from discord.ui import View
-
-from src.PrinterStatus.StartPrintModal import StartPrintModal
-
-
-def read_printers_from_file():
-    out = []
-    printers = open("printers.txt", "r")
-    for line in printers:
-        out.append(SelectOption(label=line, value=line))
-    return out
+from src.UI.PrinterSelection import StartPrintPrinterSelection
 
 
 class MainMenu(View):
@@ -20,7 +11,8 @@ class MainMenu(View):
         custom_id="started-print",
         emoji="🖨️")
     async def started_print_callback(self, button, interaction: ApplicationContext):
-        await interaction.response.send_modal(StartPrintModal("Start Print"))
+        await interaction.response.send_message("Select printer to start print", view=StartPrintPrinterSelection(), ephemeral=True)
+        # await interaction.response.send_modal(StartPrintModal("Started Print"))
 
     @discord.ui.button(
         style=ButtonStyle.red,
@@ -28,7 +20,7 @@ class MainMenu(View):
         custom_id="cancelled-print",
         emoji="✖️")
     async def cancelled_print_callback(self, button, interaction):
-        await interaction.send_modal.send_message(f"Button Clicked!")
+        await interaction.response.send_message(f"Button Clicked!")
 
     @discord.ui.button(
         style=ButtonStyle.blurple,

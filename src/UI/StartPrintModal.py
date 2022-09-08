@@ -13,4 +13,4 @@ class StartPrintModal(Modal):
         )
 
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_message(f"{interaction.user.mention}, Please upload an image for :{self.children[0].value}:, say \"cancel\" to cancel.")
+        await interaction.response.send_message(f"{interaction.user.mention},{self.children[0].value}")
