@@ -1,7 +1,7 @@
 import discord
 from discord.ui import Modal, InputText
 
-class StartPrintModal(Modal):
+class ReportProblemModal(Modal):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.add_item(

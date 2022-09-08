@@ -44,7 +44,7 @@ class Bot(commands.Bot):
     def load_cogs(self):
         # Start cogs
         logging.info(f"{ts.get_time_stamp()} Starting Cogs")
-        printer_cog = PrinterStatusCog(bot, self)
+        printer_cog = PrinterStatusCog(self)
         self.add_cog(printer_cog)
 
     async def on_ready(self):

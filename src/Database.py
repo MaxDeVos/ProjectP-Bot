@@ -5,10 +5,9 @@ class Database:
 
     database_channel: discord.channel.TextChannel
 
-    def __init__(self, bot, client):
+    def __init__(self, bot):
         self.bot = bot
-        self.client = client
-        self.database_channel = self.client.channelDict["bot-database"]
+        self.database_channel = self.bot.channelDict["bot-database"]
         self.database_message_id = None
 
     async def async_init(self):

@@ -1,7 +1,6 @@
 from datetime import datetime
 from enum import Enum
 
-import discord
 import pytz as pytz
 
 
@@ -47,7 +46,7 @@ class Printer:
             note = f"ETA: {note}"
 
         out = f"{out} | {note}"
-        print(out)
+        # print(out)
         return out
 
     def __str__(self):
