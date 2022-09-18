@@ -24,6 +24,7 @@ class StartPrintPrinterSelection(View):
 
     def __init__(self, options, callback, *items: Item):
         super().__init__(*items)
+        self.timeout = None
         self.add_item(PrinterSelection(options=options, callback=callback))
 
 
@@ -31,6 +32,7 @@ class CancelPrintPrinterSelection(View):
 
     def __init__(self, *items: Item):
         super().__init__(*items)
+        self.timeout = None
 
     @discord.ui.select(
         options=read_printers_from_file())

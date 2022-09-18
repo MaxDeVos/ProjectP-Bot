@@ -26,7 +26,6 @@ class PrinterStatusCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("ON READY IN COG")
         self.printer_manager = PrinterManager(self.bot)
         self.printer_channel = self.bot.channelDict["printer-status"]
         self.database_channel = self.bot.channelDict["bot-database"]
@@ -34,7 +33,7 @@ class PrinterStatusCog(commands.Cog):
 
         logging.info(f"{ts.get_time_stamp()} Starting Printer Status System")
         self.bot.add_application_command(self.new_status_messages)
-        logging.info("Registered test slash command")
+        logging.info("Registered new status messages slash command")
 
         history = await self.printer_channel.history(oldest_first=True, limit=1).flatten()
         self.status_message = history[0]
@@ -45,6 +44,9 @@ class PrinterStatusCog(commands.Cog):
     async def on_message(self, message: Message):
         if message.channel.id == self.database_channel.id and message.author.id == 155102908281520129:
             await self.handle_user_database_update(message=message)
+        # else:
+        #     await self.database.overwrite_database(content_to_write=self.printer_manager.get_database_message())
+        #     await self.regenerate_all()
 
     async def handle_user_database_update(self, message: Message):
         logging.info(f"{ts.get_time_stamp()} Updating database by manual user request.")
@@ -57,14 +59,34 @@ class PrinterStatusCog(commands.Cog):
 
         if new_messages:
             self.status_message = await self.printer_channel.send(content)
-            await self.printer_channel.send("I have...", view=MainMenu(self.printer_manager))
+            await self.printer_channel.send("I have...", view=MainMenu(self))
             return
 
         status_message = await self.printer_channel.fetch_message(self.status_message.id)
         await status_message.edit(content=content)
-        self.bot.add_view(MainMenu(self.printer_manager))
+        self.bot.add_view(MainMenu(self))
 
     @commands.slash_command(name="new_status_messages")
     async def new_status_messages(self, ctx: ApplicationContext):
         await self.regenerate_all(new_messages=True)
-        await ctx.send_response("GAMING", view=MainMenu(self.printer_manager))
+        await ctx.send_response("GAMING", view=MainMenu(self))
+
+    async def start_print_func(self, user, printer_id, hours):
+        self.printer_manager.get_printer_by_id(printer_id).start_print(user, hours)
+        await self.database.overwrite_database(content_to_write=self.printer_manager.get_database_message())
+        await self.regenerate_all()
+
+    async def cancel_print_func(self, printer_id):
+        self.printer_manager.get_printer_by_id(printer_id).cancel_print()
+        await self.database.overwrite_database(content_to_write=self.printer_manager.get_database_message())
+        await self.regenerate_all()
+
+    async def mark_problem_func(self, user, printer_id, note):
+        self.printer_manager.get_printer_by_id(printer_id).mark_problem(user, note)
+        await self.database.overwrite_database(content_to_write=self.printer_manager.get_database_message())
+        await self.regenerate_all()
+
+    async def mark_fixed_func(self, printer_id):
+        self.printer_manager.get_printer_by_id(printer_id).mark_fixed()
+        await self.database.overwrite_database(content_to_write=self.printer_manager.get_database_message())
+        await self.regenerate_all()

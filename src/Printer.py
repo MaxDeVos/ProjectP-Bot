@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
 
 import pytz as pytz
@@ -15,7 +15,6 @@ class Printer:
     make: str
     model: str
     status: PrinterStatus
-    note: str
 
     def __init__(self, bot, _id, name, model, status: PrinterStatus, user=None, note=None):
         self.bot = bot
@@ -23,42 +22,69 @@ class Printer:
         self.name = name
         self.model = model
         self.status = status
-        self.user = user
+        self.user_id = user
         self.note = note
 
     async def get_formatted_output(self):
-        symbol = str(self.status.value).replace("0", "✅").replace("1", "⌛").replace("2", "⛔")
-        out = f"{symbol} {self.name} ({self.model})"
+        symbol = str(self.status.value).replace("0", "✅").replace("1", "🖨️").replace("2", "⛔")
+        out = f"{symbol} {self.name:<12} | {self.model:<12}"
+        # out = '{:^17} | {:^17}'.format(self.name, self.model)
+        # out = f"|{self.name:^15}|"
 
-        user = self.user
+        user = self.user_id
         if user is not None:
-            user_temp = await self.bot.fetch_user(int(user))
-            user = user_temp.mention
-            out = f"{out} | {user}"
+            user_temp = await self.bot.guild.fetch_member(int(user))
+            user = user_temp.nick
+            if user is None:
+                user = user_temp.name
+            out = f"{out} | {user:<12}"
 
         note = self.note
         if self.status == PrinterStatus.PRINTING:
             epoch = int(note)
-            utc = datetime.utcfromtimestamp(epoch)
-            timezone = pytz.timezone("America/Chicago")
-            local_time = timezone.localize(utc)
-            note = local_time.strftime("%a, %b %d @ %I:%M%p")
-            note = f"ETA: {note}"
+            utc_native_time = datetime.utcfromtimestamp(epoch)
+            cst = pytz.timezone('US/Central')
+            utc_time = pytz.utc.localize(utc_native_time)
+            cst_time = utc_time.astimezone(cst)
+            note = cst_time.strftime("%a, %b %d @ %I:%M%p")
+            note = f"ETA: {note:<15}"
+            out = f"{out} | {note}"
+        elif note is not None:
+            out = f"{out} | {note}"
 
-        out = f"{out} | {note}"
         # print(out)
-        return out
+        return f"{out}"
+
+    def cancel_print(self):
+        self.status = PrinterStatus.READY
+        self.user_id = None
+        self.note = None
+
+    def start_print(self, user, hours):
+        self.status = PrinterStatus.PRINTING
+        self.user_id = user.id
+        note = (datetime.now() + timedelta(minutes=hours * 60)).timestamp()
+        self.note = f"{note}".split(".")[0]
+
+    def mark_problem(self, user, note):
+        self.status = PrinterStatus.DOWN
+        self.user_id = user.id
+        self.note = note
+
+    def mark_fixed(self):
+        self.cancel_print()
+        pass
 
     def __str__(self):
-        user = self.user
-        if user is None:
-            user = ""
+        user_id = self.user_id
+        if user_id is None:
+            user_id = ""
 
         note = self.note
         if note is None:
             note = ""
 
-        return f"{self.id}|{self.name}|{self.model}|{self.status.value}|{user}|{note}"
+        return f"{self.id}|{self.name}|{self.model}|{self.status.value}|{user_id}|{note}"
 
 def get_printer_from_database(line: str, bot):
     # print(f"GOT LINE: {line}")

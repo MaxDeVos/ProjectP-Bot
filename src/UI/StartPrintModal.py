@@ -15,6 +15,7 @@ class StartPrintModal(Modal):
         )
 
     async def callback(self, interaction: discord.Interaction):
-        await self.new_callback(self.selected_printer_id,
+        await self.new_callback(interaction.user,
+                                self.selected_printer_id,
                                 interaction.data['components'][0]['components'][0]['value'],
                                 interaction)

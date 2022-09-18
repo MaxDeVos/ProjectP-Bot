@@ -11,7 +11,7 @@ class Database:
         self.database_message_id = None
 
     async def async_init(self):
-        history = await self.database_channel.history(limit=None, oldest_first=True).flatten()
+        history = await self.database_channel.history(limit=5, oldest_first=True).flatten()
         database_message = history[0]
         if not database_message.author.id == self.bot.user.id:  # verify that the head message belongs to the bot
             raise Exception("Database Exception: head message isn't editable")
