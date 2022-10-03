@@ -1,13 +1,12 @@
 import logging
-
 import discord.types.channel
 from discord import Message, ApplicationContext
 from discord.ext import commands
 
-from src.Database import Database
-from src.PrinterManger import PrinterManager
-from src.UI.MainMenu import MainMenu
-from src.TimestampGenerator import TimestampGenerator
+from Database import Database
+from PrinterManger import PrinterManager
+from UI.MainMenu import MainMenu
+from TimestampGenerator import TimestampGenerator
 
 ts = TimestampGenerator("PRINTERS")
 
@@ -34,6 +33,11 @@ class PrinterStatusCog(commands.Cog):
         logging.info(f"{ts.get_time_stamp()} Starting Printer Status System")
         self.bot.add_application_command(self.new_status_messages)
         logging.info("Registered new status messages slash command")
+
+        # init_message = open("data/printers.txt").read()
+        # init_message = f"```{init_message}```"
+        # await self.printer_channel.send("bruh")
+        # await self.printer_channel.send("bruh")
 
         history = await self.printer_channel.history(oldest_first=True, limit=1).flatten()
         self.status_message = history[0]

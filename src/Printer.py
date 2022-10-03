@@ -3,7 +3,6 @@ from enum import Enum
 
 import pytz as pytz
 
-
 class PrinterStatus(Enum):
     READY = 0
     PRINTING = 1
@@ -27,7 +26,7 @@ class Printer:
 
     async def get_formatted_output(self):
         symbol = str(self.status.value).replace("0", "✅").replace("1", "🖨️").replace("2", "⛔")
-        out = f"{symbol} {self.name:<12} | {self.model:<12}"
+        out = f"{symbol} {self.name:<12} | {self.model:<15}"
         # out = '{:^17} | {:^17}'.format(self.name, self.model)
         # out = f"|{self.name:^15}|"
 
@@ -37,7 +36,7 @@ class Printer:
             user = user_temp.nick
             if user is None:
                 user = user_temp.name
-            out = f"{out} | {user:<12}"
+            out = f"{out} | {user:<15}"
 
         note = self.note
         if self.status == PrinterStatus.PRINTING:

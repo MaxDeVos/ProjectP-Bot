@@ -1,5 +1,5 @@
-key.txt
-test_key.txt
+keys/key.txt
+keys/test_key.txt
 /.idea/
 /Legacy/pycord/
 /Legacy/

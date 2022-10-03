@@ -8,7 +8,6 @@ from src.UI.PrinterSelection import StartPrintPrinterSelection
 from src.UI.ReportProblemModal import ReportProblemModal
 from src.UI.StartPrintModal import StartPrintModal
 
-
 class MainMenu(View):
 
     printer_manager: PrinterManger

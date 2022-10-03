@@ -1,0 +1,12 @@
+FROM python:3.10
+
+ADD keys/test_key.txt keys/
+ADD keys/key.txt keys/
+ADD printers.txt .
+ADD src src
+RUN mkdir logs
+
+ADD requirements.txt .
+RUN pip install -r requirements.txt
+
+CMD ["python", "src/Main.py"]

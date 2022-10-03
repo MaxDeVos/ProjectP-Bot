@@ -1,8 +1,6 @@
 from discord import SelectOption
 
-from src import Printer
-from src.Printer import PrinterStatus
-
+import Printer
 
 async def load_printers(database_content, bot):
     out = []

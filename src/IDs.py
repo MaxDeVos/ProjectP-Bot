@@ -1,0 +1,3 @@
+active_guild_id = 619968722555371532
+test_guild_id = 782870393517768704
+production_guild_id = 619968722555371532
