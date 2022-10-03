@@ -1,12 +1,11 @@
 import logging
 import sys
-
+import os
 from discord.ext import commands
 from datetime import datetime
 
-sys.path.insert(1, '')
+sys.path.insert(1, '')  # if this isn't here, local imports fail in Docker. ¯\_(ツ)_/¯
 
-from IDs import active_guild_id
 from PrinterStatusCog import PrinterStatusCog
 from TimestampGenerator import TimestampGenerator
 
@@ -19,20 +18,8 @@ logging.basicConfig(
     ]
 )
 
-production = False
-# if len(sys.argv) > 1:
-#     try:
-#         os.chdir(sys.argv[1])
-#         production = True
-#         logging.info("RUNNING IN PRODUCTION")
-#     except Exception as e:
-#         logging.error(f"FAILED TO FIND DIRECTORY: {sys.argv[1]}")
-# else:
-#     active_guild_id = test_guild_id
-#     logging.info("RUNNING IN TESTING")
-
 ts = TimestampGenerator("BOT")
-
+active_guild_id = int(os.environ.get("GUILD_ID"))
 
 class Bot(commands.Bot):
 
@@ -62,8 +49,6 @@ class Bot(commands.Bot):
         for a in self.guild.text_channels:
             self.channelDict[a.name] = a
 
-
-
         # Send Message
         # ch = await self.fetch_channel(1017179127066927124)
         # content = open("printers.txt", "r").read()
@@ -75,18 +60,9 @@ class Bot(commands.Bot):
         # await msg.add_reaction("🟠")
 
 
-# Read API key from file
-if production:
-    f = open("keys/key.txt", "r")
-else:
-    f = open("keys/test_key.txt", "r")
-key = f.read()
-
 # Create and start Bane Bot
 bot = Bot()
 bot.load_cogs()
-bot.run(key)
+bot.run(os.environ.get('APIKEY'))
 # bot.load_extension("src.PrinterStatus.PrinterStatusCog")
 # bot.extensions.items().
-
-
